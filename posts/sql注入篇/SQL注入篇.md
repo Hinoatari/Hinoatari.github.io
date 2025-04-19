@@ -11,9 +11,12 @@ author: "Hinoatari"
 
 ```markdown
 1.联合注入函数:
-concat()、concat_ws()、group_concat() 2.布尔盲注函数:
-length()、left()、right()、substr()、mid()、ascii()、ord() 3.时间盲注函数:
-sleep()、if() 4.报错注入函数:
+concat()、concat_ws()、group_concat() 
+2.布尔盲注函数:
+length()、left()、right()、substr()、mid()、ascii()、ord() 
+3.时间盲注函数:
+sleep()、if() 
+4.报错注入函数:
 floor()、exp()、updatexml()、extractvalue()
 ```
 
