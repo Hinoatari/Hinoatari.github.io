@@ -137,10 +137,10 @@ file、subprocess.Popen、os.popen、exec、eval
 
 - ## 过滤数字
 
-  ```
+
   使用过滤器 length 绕过
-  {% set a='aaa' | lenth %}{{ ().__class__.__base__.__subclasses__()[a]}}
-  ```
+  \{\% set a='aaa' | lenth \%\}{{ ().__class__.__base__.__subclasses__()[a]}}
+
 
 - ## 过滤函数名
 
@@ -159,5 +159,5 @@ file、subprocess.Popen、os.popen、exec、eval
 ---
 
 > 作者: Hinoatari  
-> URL: http://localhost:1313/posts/ssti%E6%B3%A8%E5%85%A5%E7%AF%87/  
+> URL: https://hinoatari.github.io/posts/ssti%E6%B3%A8%E5%85%A5%E7%AF%87/  
 
