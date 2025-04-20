@@ -1,9 +1,7 @@
 # SQL注入篇
 
 
-# SQL 注入篇
-
-## SQL 注入常用函数
+# SQL 注入常用函数
 
 1. 联合注入函数:
    - concat()
@@ -27,11 +25,11 @@
    - extractvalue()
 
 
-## (一)注入类型
+# (一)注入类型
 
 SQL 注入通常分为两种类型：数字型和字符型
 
-### (1)注入类型为数字型时，SQL 查询语句通常为：
+## (1)注入类型为数字型时，SQL 查询语句通常为：
 
 ` select * from users where id = x`
 
@@ -42,7 +40,7 @@ SQL 注入通常分为两种类型：数字型和字符型
 2. ?id = 1 and 1 = 2 --+ 若报错， 则注入类型为数字型
 ```
 
-### (2)注入类型为字符型时，SQL 查询语句通常为：
+## (2)注入类型为字符型时，SQL 查询语句通常为：
 
 `select * from users where id = '1'`
 
@@ -53,9 +51,9 @@ SQL 注入通常分为两种类型：数字型和字符型
 2. ?id = 1' and '1' = '2 --+ 若报错， 则注入类型为字符型
 ```
 
-## (二)报错注入
+# (二)报错注入
 
-### 一、SQL 报错注入常用函数：
+## 一、SQL 报错注入常用函数：
 
 **updatexml（）**、**extractvalue（）**、**floor（）**
 
@@ -85,7 +83,7 @@ SQL 注入通常分为两种类型：数字型和字符型
 - count(\*) 是一个聚合函数，用来计算表中所有行的数量，floor(rand(0)\*2)产生的固定序列为：**01101**，结合 group by 会产生一个虚拟表。
 - 原理：rand 伪随机函数与**order by**或**group by**函数的冲突，例如 floor(rand(0)\*2)一开始计算得到了 0，group by 根据 0 分类统计，在写入要返回的虚表时 floor(rand(0)\*2)还要计算一次结果，这次结果却是 1，导致了冲突。
 
-### 二、updatexml 函数实战（基于 dvwa 靶场）
+## 二、updatexml 函数实战（基于 dvwa 靶场）
 
 1.爆数据库和用户名：`1' and updatexml(1,concat(0x7e,database(),0x7e,user()),1)#`
 
@@ -103,7 +101,7 @@ SQL 注入通常分为两种类型：数字型和字符型
 
 输出结果： ![测试结果](https://hinoatari.github.io/images/sql注入篇/4.png)
 
-### 三、extractvalue 函数实战（基于 dvwa 靶场）
+## 三、extractvalue 函数实战（基于 dvwa 靶场）
 
 1.爆数据库和用户名：`1' and extractvalue(1,concat(0x7e,database(),0x7e,user()))#`
 
@@ -121,7 +119,7 @@ SQL 注入通常分为两种类型：数字型和字符型
 
 输出结果： ![测试结果](https://hinoatari.github.io/images/sql注入篇/4.png)
 
-### 四、floor 函数实战 (基于 dvwa 靶场)
+## 四、floor 函数实战 (基于 dvwa 靶场)
 
 1.判断是否存在报错注入：`1' union select count(*),floor(rand(0)*2) x from information_schema.tables group by x#`
 
