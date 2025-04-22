@@ -65,11 +65,11 @@ if(!isset($_GET['num'])){
 
 参考链接：`https://blog.csdn.net/m0_73612768/article/details/135013881`，发现还有一种命令执行的方法，构造payload`? num=1;eval(end(pos(get_defined_vars())))&nss=phpinfo();`，
 
-**get_defined_vars()：**返回由所有已定义变量所组成的数组，会返回 GET , POST , COOKIE, FILES 全局变量的值，返回数组顺序为 get->post->cookie->files 。
+get_defined_vars()：返回由所有已定义变量所组成的数组，会返回 GET , POST , COOKIE, FILES 全局变量的值，返回数组顺序为 get->post->cookie->files 。
 
-**pos()：**返回数组中的当前单元，初始指向插入到数组中的第一个单元，也就是会返回 $_GET 变量的数组值。
+pos()：返回数组中的当前单元，初始指向插入到数组中的第一个单元，也就是会返回 $_GET 变量的数组值。
 
-**end()：**将内部指针指向数组中的最后一个元素，并输出。即新加入的参数 nss 。最后由 eval() 函数执行，使得 get 方式的参数 nss 生效。这样的话就可以再利用 nss 传参了，由于代码只对 num 参数的值做了过滤，因此 nss 参数理论上可以造成任意代码执行。
+end()：将内部指针指向数组中的最后一个元素，并输出。即新加入的参数 nss 。最后由 eval() 函数执行，使得 get 方式的参数 nss 生效。这样的话就可以再利用 nss 传参了，由于代码只对 num 参数的值做了过滤，因此 nss 参数理论上可以造成任意代码执行。
 
 构造payload：`? num=1;eval(end(pos(get_defined_vars())))&nss=include("/f1agg");`即可获得flag。
 
@@ -99,13 +99,13 @@ else {
 }
 ```
 
-考点：php弱类型比较。在php中= =为弱比较，当整数类型和字符串类型比较时，字符串先被转换成整数类型后再与整数类型进行比较。由于$str=""123ffwsfwefwf24r2f32ir23jrw923rskfjwtsw54w3""，只需要传入123即可令$key == $str。
+考点：php弱类型比较。在php中= =为弱比较，当整数类型和字符串类型比较时，字符串先被转换成整数类型后再与整数类型进行比较。由于$str=\"123ffwsfwefwf24r2f32ir23jrw923rskfjwtsw54w3\"，只需要传入123即可令$key == $str。
 
 
 
 # [BJDCTF2020]Easy MD5
 
-burp抓包发送后发现hint: select * from 'admin' where password=md5($pass,true)。`md5($pass,true)`的作用是返回原始二进制数的md5值。这里可以使用`ffifdyop`绕过，原理为：ffifdyop被md5加密后变成 `276f722736c95d99e921722cf9ed621c`，这个字符串前几位刚好是 ' `or '6`，相当于万能密码，因此可以绕过md5()函数。
+burp抓包发送后发现hint: select * from 'admin' where password=md5($pass,true)。`md5($pass,true)`的作用是返回原始二进制数的md5值。这里可以使用`ffifdyop`绕过，原理为：ffifdyop被md5加密后变成 `276f722736c95d99e921722cf9ed621c`，这个字符串前几位刚好是  `' or '6`，相当于万能密码，因此可以绕过md5()函数。
 
 传入ffifdyop后进入levels91.php，发包后返回信息中有一条：
 
@@ -158,7 +158,7 @@ md5强比较，用`param1[]=1&param2[]=2`即可绕过。`flag{17b7a715-330f-4e08
 
 后面就是查表、列、字段信息，发现没有和flag相关的信息，但是存在一条php序列化后的数据：
 
-![](F:\hugoblog\blog\static\images\web刷题\1-3.png)
+![](https://hinoatari.github.io/images/web刷题/image-20250422175900712/1-3.png)
 
 在robots.txt中发现还有备份文件：`user.php.bak`，下载后进行代码审计
 
@@ -242,7 +242,7 @@ echo serialize($a);
 
 刷新后即可看到已经以admin身份登录，并且存在三个png图像，其中一个还是flag.png
 
-![https://hinoatari.github.io/images/web刷题/image-20250422175900712](1-4.png)
+![](https://hinoatari.github.io/images/web刷题/image-20250422175900712/1-4.png)
 
 直接访问图像路径会显示图像存在错误而无法访问，用burp访问后即可得到flag
 
@@ -316,7 +316,7 @@ function getFlag(){
 
 如果我们构造payload：`?.*={${phpinfo()}}`，php处理的语句就会变成`preg_replace('/(.*)/ei', 'strtolower("\\1")', ${phpinfo()});`单看这条语句，/(.*)/ei会匹配${phpinfo()}的全部内容，并在strtolower中反向引用，变成strtolower(${phpinfo()})，由于正则表达式中存在e参数，phpinfo()将被当做php代码执行。但本题中该payload没有执行，原因是在PHP中，对于传入的非法的$_GET数组参数名，会将其转化为下划线，导致了正则匹配失效。因此需要将.替换成\S。
 
-构造payload：?\S*=${getFlag()}&cmd=passthru("ls /")，发现存在flag，利用cat /flag读取就能获得flag。
+构造payload：?\S\*=${getFlag()}&cmd=passthru("ls /")，发现存在flag，利用cat /flag读取就能获得flag。
 
 `flag{ebc21d3d-fc88-4db7-b2bc-8d81e0863930}`
 
@@ -324,5 +324,5 @@ function getFlag(){
 ---
 
 > 作者: Hinoatari  
-> URL: http://localhost:1313/posts/buuctfweb%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/  
+> URL: https://hinoatari.github.io/posts/buuctfweb%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/  
 

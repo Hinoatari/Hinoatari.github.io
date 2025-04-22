@@ -149,5 +149,5 @@ SQL 注入通常分为两种类型：数字型和字符型
 ---
 
 > 作者: Hinoatari  
-> URL: http://localhost:1313/posts/sql%E6%B3%A8%E5%85%A5%E7%AF%87/  
+> URL: https://hinoatari.github.io/posts/sql%E6%B3%A8%E5%85%A5%E7%AF%87/  
 
