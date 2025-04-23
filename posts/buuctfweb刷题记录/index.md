@@ -1,7 +1,7 @@
 # BUUCTF——WEB刷题记录
 
 
-# [RoarCTF 2019]Easy Calc
+## [RoarCTF 2019]Easy Calc
 
 考点：命令执行
 
@@ -57,7 +57,7 @@ if(!isset($_GET['num'])){
 
 查看phpinfo，发现过滤了很多执行函数，但没有过滤var_dump、scandir、file_get_contents，构造参数?%20num=var_dump(scandir(chr(47)))，因为"\\"被过滤了，使用chr(47)替代"\\"，查看根目录信息
 
-![image-20250422125800793](C:\Users\15495\AppData\Roaming\Typora\typora-user-images\image-20250422125800793.png)
+![image-20250422125800793](https://hinoatari.github.io/images/web刷题/1-3.png)
 
 发现f1agg，构造参数`?%20num=var_dump(file_get_contents(chr(47).f1agg))`即可获取flag。`flag{9f0a644e-780d-47ff-b1b3-87f2568f3fc0} `
 
@@ -75,7 +75,7 @@ end()：将内部指针指向数组中的最后一个元素，并输出。即新
 
 
 
-# [ACTF2020 新生赛]BackupFile
+## [ACTF2020 新生赛]BackupFile
 
 扫网站备份文件，存在index.php.bak文件，打开后进行php代码审计
 
@@ -103,7 +103,7 @@ else {
 
 
 
-# [BJDCTF2020]Easy MD5
+## [BJDCTF2020]Easy MD5
 
 burp抓包发送后发现hint: select * from 'admin' where password=md5($pass,true)。`md5($pass,true)`的作用是返回原始二进制数的md5值。这里可以使用`ffifdyop`绕过，原理为：ffifdyop被md5加密后变成 `276f722736c95d99e921722cf9ed621c`，这个字符串前几位刚好是  `' or '6`，相当于万能密码，因此可以绕过md5()函数。
 
@@ -158,7 +158,7 @@ md5强比较，用`param1[]=1&param2[]=2`即可绕过。`flag{17b7a715-330f-4e08
 
 后面就是查表、列、字段信息，发现没有和flag相关的信息，但是存在一条php序列化后的数据：
 
-![](https://hinoatari.github.io/images/web刷题/image-20250422175900712/1-3.png)
+![](https://hinoatari.github.io/images/web刷题/1-3.png)
 
 在robots.txt中发现还有备份文件：`user.php.bak`，下载后进行代码审计
 
@@ -242,7 +242,7 @@ echo serialize($a);
 
 刷新后即可看到已经以admin身份登录，并且存在三个png图像，其中一个还是flag.png
 
-![](https://hinoatari.github.io/images/web刷题/image-20250422175900712/1-4.png)
+![](https://hinoatari.github.io/images/web刷题/1-4.png)
 
 直接访问图像路径会显示图像存在错误而无法访问，用burp访问后即可得到flag
 
@@ -250,7 +250,7 @@ echo serialize($a);
 
 
 
-# [BJDCTF2020]ZJCTF，不过如此
+## [BJDCTF2020]ZJCTF，不过如此
 
 考点：文件包含、命令执行
 
@@ -306,17 +306,17 @@ function getFlag(){
 
 ```
 
-分析一下，complex函数需要参数$re、$str，并且两个参数都可控，这个函数的作用时如果str中匹配到了满足/(' . $re . ')/ei的字符串就执行strtolower("\\1")，并且由于存在e参数，php会执行第二个参数，即eval(strtolower("\1"))。getFlag函数中存在eval函数，通过传递cmd执行命令，但@eval()默认不会被调用，需要通过其它的方式触发。
+分析一下，complex函数需要参数\$re、\$str，并且两个参数都可控，这个函数的作用时如果str中匹配到了满足/(' . $re . ')/ei的字符串就执行strtolower("\\1")，并且由于存在e参数，php会执行第二个参数，即eval(strtolower("\1"))。getFlag函数中存在eval函数，通过传递cmd执行命令，但@eval()默认不会被调用，需要通过其它的方式触发。
 
-查询资料得知\\1设计一个叫做**反向引用**的知识点：
+查询资料得知\\1涉及一个叫做**反向引用**的知识点：
 
 ```markdown
 # 对一个正则表达式模式或部分模式两边添加圆括号,将导致相关匹配存储到一个临时缓冲区中，所捕获的每个子匹配都按照在正则表达式模式中从左到右出现的顺序存储。缓冲区编号从 1 开始，最多可存储 99 个捕获的子表达式。每个缓冲区都可以使用 ‘\n’ 访问，其中 n 为一个标识特定缓冲区的一位或两位十进制数。所以这里的 \1 实际上指定的是第一个子匹配项
 ```
 
-如果我们构造payload：`?.*={${phpinfo()}}`，php处理的语句就会变成`preg_replace('/(.*)/ei', 'strtolower("\\1")', ${phpinfo()});`单看这条语句，/(.*)/ei会匹配${phpinfo()}的全部内容，并在strtolower中反向引用，变成strtolower(${phpinfo()})，由于正则表达式中存在e参数，phpinfo()将被当做php代码执行。但本题中该payload没有执行，原因是在PHP中，对于传入的非法的$_GET数组参数名，会将其转化为下划线，导致了正则匹配失效。因此需要将.替换成\S。
+如果我们构造payload：`?.*={${phpinfo()}}`，php处理的语句就会变成`preg_replace('/(.*)/ei', 'strtolower("\\1")', ${phpinfo()});`单看这条语句，`/(.*)/`ei会匹配\$\{phpinfo()\}的全部内容，并在`strtolower`中反向引用，变成`strtolower(${phpinfo()})`，由于正则表达式中存在e参数，phpinfo()将被当做php代码执行。但本题中该payload没有执行，原因是在PHP中，对于传入的非法的$_GET数组参数名，会将其转化为下划线，导致了正则匹配失效。因此需要将.替换成\S。
 
-构造payload：?\S\*=${getFlag()}&cmd=passthru("ls /")，发现存在flag，利用cat /flag读取就能获得flag。
+构造payload：`?\S*=${getFlag()}&cmd=passthru("ls /")`，发现存在flag，利用cat /flag读取就能获得flag。
 
 `flag{ebc21d3d-fc88-4db7-b2bc-8d81e0863930}`
 
